@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - Quiz EMASPG</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab:hover {
+            background: #e9ecef;
+        }
+        
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: white;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .button.success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+        
+        .button.info {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        }
+        
+        .button.danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+        
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .results-table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .results-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 14px;
+        }
+        
+        .results-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .score-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        .score-excellent {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .score-good {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .score-average {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .score-low {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+        
+        .no-data-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            overflow-y: auto;
+        }
+        
+        .modal.show {
+            display: block;
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 50px auto;
+            padding: 0;
+            width: 90%;
+            max-width: 900px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            font-size: 22px;
+        }
+        
+        .close {
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+        
+        .close:hover {
+            opacity: 0.8;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .questionnaire-view {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+        }
+        
+        .question-item {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #e9ecef;
+        }
+        
+        .question-item.correct {
+            border-left-color: #28a745;
+            background: #f0fff4;
+        }
+        
+        .question-item.incorrect {
+            border-left-color: #dc3545;
+            background: #fff5f5;
+        }
+        
+        .question-title {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+        
+        .answer-option {
+            padding: 8px 0;
+            font-size: 14px;
+        }
+        
+        .answer-option.selected {
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .answer-option.correct-answer {
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        .answer-option.should-be {
+            color: #dc3545;
+            font-weight: 600;
+        }
+        
+        .result-indicator {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .result-indicator.correct {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .result-indicator.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .thematic-scores {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .thematic-score-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .thematic-score-card h4 {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 8px;
+        }
+        
+        .thematic-score-card .score {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+            }
+            .tabs, .button, .action-buttons {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Administration - Quiz EMASPG</h1>
+            <p>Gestion et consultation des résultats</p>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('stats')">📈 Statistiques</div>
+            <div class="tab" onclick="switchTab('results')">📋 Tous les résultats</div>
+        </div>
+        
+        <!-- Tab: Statistics -->
+        <div class="tab-content active" id="tab-stats">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Nombre de participants</div>
+                    <div class="stat-value" id="totalParticipants">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Score moyen</div>
+                    <div class="stat-value" id="averageScore">0%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Meilleur score</div>
+                    <div class="stat-value" id="bestScore">0/20</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Taux de réussite (≥60%)</div>
+                    <div class="stat-value" id="successRate">0%</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="button success" onclick="loadData()">🔄 Actualiser</button>
+            </div>
+        </div>
+        
+        <!-- Tab: Results -->
+        <div class="tab-content" id="tab-results">
+            <div class="action-buttons">
+                <button class="button success" onclick="loadData()">🔄 Actualiser</button>
+                <button class="button info" onclick="exportToCSV()">📥 Exporter CSV</button>
+                <button class="button danger" onclick="clearAll()">🗑️ Tout effacer</button>
+            </div>
+            
+            <div id="resultsContainer"></div>
+        </div>
+    </div>
+    
+    <!-- Modal pour voir le détail d'un questionnaire -->
+    <div id="questionnaireModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Détail du questionnaire</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="questionnaireDetail"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Questions definition
+        const questions = {
+            q1: {
+                title: "Concernant les Soins palliatifs :",
+                options: {
+                    a: "Ce sont des soins actifs et continus.",
+                    b: "Ce sont des soins de la phase ultime et uniquement de celle-ci.",
+                    c: "C'est l'arrêt des soins.",
+                    d: "Il est toujours facile de déterminer le moment où l'on commence les soins palliatifs."
+                }
+            },
+            q2: {
+                title: "Parmi ces propositions concernant la personne de confiance, lesquelles sont vraies ?",
+                options: {
+                    a: "Toute personne majeure (hors tutelle) peut désigner une personne de confiance.",
+                    b: "La personne de confiance doit toujours signer le formulaire de désignation.",
+                    c: "La personne de confiance donne son avis à elle.",
+                    d: "La personne de confiance peut assister le résident dans ses démarches médicales."
+                }
+            },
+            q3: {
+                title: "Les grands principes de la Loi CLAEYS LEONETTI sont :",
+                options: {
+                    a: "Le respect de la volonté de la personne.",
+                    b: "Les directives anticipées, la personne de confiance.",
+                    c: "L'obligation de proposer au résident des soins/traitements les plus adaptés à son état général.",
+                    d: "L'autorisation du suicide médicalement assisté."
+                }
+            },
+            q4: {
+                title: "En cas de décision à prendre sur un traitement, et que le résident ne peut pas s'exprimer :",
+                options: {
+                    a: "S'il y a des directives anticipées, on doit les consulter.",
+                    b: "S'il y a une personne de confiance, on doit la consulter.",
+                    c: "La procédure collégiale est mise en place s'il n'y a ni personne de confiance ni directive anticipée.",
+                    d: "La famille prend les décisions pour les traitements."
+                }
+            },
+            q5: {
+                title: "Peut-on soulager les souffrances des malades en fin de vie au risque d'abréger la vie ?",
+                options: {
+                    a: "Oui",
+                    b: "Non"
+                }
+            },
+            q6: {
+                title: "La douleur :",
+                options: {
+                    a: "Peut-être nociceptive ou neuropathique ou nociplastique ou mixte.",
+                    b: "A une dimension émotionnelle.",
+                    c: "Est moins fréquente chez les personnes âgées que dans le reste de la population.",
+                    d: "Nécessite l'utilisation d'outils d'évaluation validés.",
+                    e: "Doit toujours être prise en compte."
+                }
+            },
+            q7: {
+                title: "Les effets indésirables de la morphine sont :",
+                options: {
+                    a: "La constipation.",
+                    b: "La somnolence.",
+                    c: "La bradypnée (= ralentissement de la respiration).",
+                    d: "La confusion.",
+                    e: "Les nausées."
+                }
+            },
+            q8: {
+                title: "Reliez les échelles au type d'évaluation :",
+                options: {
+                    algoplus: "Algoplus",
+                    evs: "Échelle verbale simple (EVS)",
+                    en: "Échelle numérique (EN)",
+                    ecpa: "ECPA"
+                },
+                isMatching: true
+            },
+            q9: {
+                title: "En cas de soins et/ou soins de nursing douloureux, une prémédication peut être utile :",
+                options: {
+                    a: "En cas d'administration d'un traitement morphinique par voie orale, le médicament doit être donné au moins 1 heure avant le soin.",
+                    b: "En cas d'administration d'un traitement morphinique par voie sous-cutanée, l'injection doit être faite quand le soin débute.",
+                    c: "La prémédication d'un traitement morphinique est efficace pendant 4 heures.",
+                    d: "Associée à une coordination et à une bonne organisation entre les soignants.",
+                    e: "La douleur est toujours d'origine nociceptive lors des soins ou de la toilette."
+                }
+            },
+            q10: {
+                title: "La douleur chez une personne non communicante atteinte d'une démence peut se traduire par :",
+                options: {
+                    a: "Repli sur soi.",
+                    b: "Agressivité / changement du comportement.",
+                    c: "Position fœtale.",
+                    d: "Amélioration de son appétit.",
+                    e: "Amélioration de son humeur."
+                }
+            },
+            q11: {
+                title: "Parmi ces troubles, lesquels sont des troubles cognitifs ?",
+                options: {
+                    a: "Troubles du jugement.",
+                    b: "Troubles de l'orientation.",
+                    c: "Troubles de l'attachement émotionnel.",
+                    d: "Troubles de la mémoire.",
+                    e: "Troubles du langage."
+                }
+            },
+            q12: {
+                title: "La démence :",
+                options: {
+                    a: "Est un mot qui englobe plusieurs maladies (ex : Maladie d'Alzheimer, démence à corps de Lewy, …).",
+                    b: "On peut guérir la démence.",
+                    c: "La démence évolue progressivement.",
+                    d: "La démence c'est la baisse des aptitudes mentales.",
+                    e: "La démence a des conséquences sur l'état général du résident."
+                }
+            },
+            q13: {
+                title: "La fin de vie chez les personnes atteintes de démence présente des particularités, lesquelles ?",
+                options: {
+                    a: "Il est facile de prévoir quand la personne va décéder.",
+                    b: "Les familles sont soumises à un ascenseur émotionnel en fonction des hauts et des bas de la personne accompagnée.",
+                    c: "Même en cas de doute sur l'orientation des soins, on privilégie le confort.",
+                    d: "Les personnes atteintes de démence ont moins de douleur que les autres personnes."
+                }
+            },
+            q14: {
+                title: "Pour communiquer avec une personne âgée démente, il est conseillé :",
+                options: {
+                    a: "D'adopter une attitude calme.",
+                    b: "De respecter le rythme du résident.",
+                    c: "D'utiliser les sens du toucher, le regard, la parole et la verticalité (approche Gineste et Marescotti).",
+                    d: "D'écouter les émotions du résident."
+                }
+            },
+            q15: {
+                title: "La fin de la vie chez la personne âgée démente :",
+                options: {
+                    a: "La démence est toujours la cause du décès.",
+                    b: "Les fausses-routes sont rares.",
+                    c: "Les résidents âgés déments sont souvent très dénutris.",
+                    d: "Il peut y avoir des escarres."
+                }
+            },
+            q16: {
+                title: "Quels sont les 3 fondamentaux de la relation d'aide ?",
+                options: {
+                    a: "Donner le nom de la pathologie rapidement pour se débarrasser de l'information",
+                    b: "La congruence",
+                    c: "La considération positive inconditionnelle",
+                    d: "L'empathie"
+                }
+            },
+            q17: {
+                title: "Quels sont les 5 besoins de la personne âgée en fin de vie ?",
+                options: {
+                    a: "Besoins physiologiques",
+                    b: "Besoin de guérison",
+                    c: "Besoin de sécurité",
+                    d: "Besoin d'appartenance",
+                    e: "Besoin d'estime de soi et des autres",
+                    f: "Besoin spirituel"
+                }
+            },
+            q18: {
+                title: "Quelles sont les deux techniques d'écoute active qui favorisent le mieux la neutralité ?",
+                options: {
+                    a: "Le conseil",
+                    b: "La reformulation",
+                    c: "L'acceptation inconditionnelle",
+                    d: "L'interprétation",
+                    e: "Le questionnement"
+                }
+            },
+            q19: {
+                title: "Quels sont les 3 critères du Burn-out du soignant ?",
+                options: {
+                    a: "Sentiment d'échec professionnel",
+                    b: "Déshumanisation de la relation à l'autre",
+                    c: "Équilibre vie personnelle/vie professionnelle",
+                    d: "Accomplissement au travail",
+                    e: "Épuisement émotionnel"
+                }
+            },
+            q20: {
+                title: "Quel est l'intérêt d'un groupe de parole pour les soignants d'un service ?",
+                options: {
+                    a: "Échanger sur les menus du restaurant de l'EHPAD",
+                    b: "Mettre en mot ses ressentis",
+                    c: "Partager son expérience en équipe",
+                    d: "Solidifier les liens de l'équipe",
+                    e: "Focaliser sur les difficultés institutionnelles"
+                }
+            }
+        };
+        
+        // Correct answers
+        const correctAnswers = {
+            q1: ['a'],
+            q2: ['a', 'b', 'd'],
+            q3: ['a', 'b', 'c'],
+            q4: ['a', 'b', 'c'],
+            q5: ['a'],
+            q6: ['a', 'b', 'd', 'e'],
+            q7: ['a', 'b', 'c', 'd', 'e'],
+            q8: {algoplus: 'hetero', evs: 'auto', en: 'auto', ecpa: 'hetero'},
+            q9: ['a', 'c', 'd'],
+            q10: ['a', 'b', 'c'],
+            q11: ['a', 'b', 'd', 'e'],
+            q12: ['a', 'c', 'd', 'e'],
+            q13: ['b', 'c'],
+            q14: ['a', 'b', 'c', 'd'],
+            q15: ['c', 'd'],
+            q16: ['b', 'c', 'd'],
+            q17: ['a', 'c', 'd', 'e', 'f'],
+            q18: ['b', 'e'],
+            q19: ['a', 'b', 'e'],
+            q20: ['b', 'c', 'd']
+        };
+        
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            
+            loadData();
+        }
+        
+        // Storage functions
+        async function getAllResults() {
+            try {
+                const results = await window.storage.list('quiz_', true);
+                const allData = [];
+                
+                for (const key of results.keys) {
+                    try {
+                        const data = await window.storage.get(key, true);
+                        if (data && data.value) {
+                            allData.push(JSON.parse(data.value));
+                        }
+                    } catch (e) {
+                        console.error('Erreur lecture:', e);
+                    }
+                }
+                
+                return allData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            } catch (error) {
+                console.error('Erreur:', error);
+                return [];
+            }
+        }
+        
+        // Load all data
+        async function loadData() {
+            const results = await getAllResults();
+            loadStatistics(results);
+            loadResults(results);
+        }
+        
+        // Load statistics
+        function loadStatistics(results) {
+            if (results.length === 0) {
+                document.getElementById('totalParticipants').textContent = '0';
+                document.getElementById('averageScore').textContent = '0%';
+                document.getElementById('bestScore').textContent = '0/20';
+                document.getElementById('successRate').textContent = '0%';
+                return;
+            }
+            
+            document.getElementById('totalParticipants').textContent = results.length;
+            
+            const avgPercentage = results.reduce((sum, r) => sum + r.percentage, 0) / results.length;
+            document.getElementById('averageScore').textContent = Math.round(avgPercentage) + '%';
+            
+            const bestResult = results.reduce((best, r) => r.totalScore > best.totalScore ? r : best);
+            document.getElementById('bestScore').textContent = `${bestResult.totalScore}/20`;
+            
+            const successCount = results.filter(r => r.percentage >= 60).length;
+            const successRate = Math.round((successCount / results.length) * 100);
+            document.getElementById('successRate').textContent = successRate + '%';
+        }
+        
+        // Load results table
+        function loadResults(results) {
+            const container = document.getElementById('resultsContainer');
+            
+            if (results.length === 0) {
+                container.innerHTML = '<div class="no-data"><div class="no-data-icon">📋</div><p>Aucun résultat disponible</p></div>';
+                return;
+            }
+            
+            let tableHTML = `
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Session ID</th>
+                            <th>Date/Heure</th>
+                            <th>Score total</th>
+                            <th>Éthique</th>
+                            <th>Douleur</th>
+                            <th>Démence</th>
+                            <th>Psychologie</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            results.forEach((result, index) => {
+                const badgeClass = 
+                    result.percentage >= 80 ? 'score-excellent' :
+                    result.percentage >= 60 ? 'score-good' :
+                    result.percentage >= 40 ? 'score-average' : 'score-low';
+                
+                const date = new Date(result.timestamp).toLocaleString('fr-FR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                const ts = result.thematicScores;
+                
+                tableHTML += `
+                    <tr>
+                        <td><code>${result.sessionId}</code></td>
+                        <td>${date}</td>
+                        <td><span class="score-badge ${badgeClass}">${result.totalScore}/20 (${result.percentage}%)</span></td>
+                        <td>${ts['Principes éthiques'].correct}/${ts['Principes éthiques'].total}</td>
+                        <td>${ts['Prise en charge de la douleur'].correct}/${ts['Prise en charge de la douleur'].total}</td>
+                        <td>${ts['Démence et fin de vie'].correct}/${ts['Démence et fin de vie'].total}</td>
+                        <td>${ts['Approche psychologique'].correct}/${ts['Approche psychologique'].total}</td>
+                        <td>
+                            <button class="button" style="padding: 8px 16px; margin: 0;" onclick="viewQuestionnaire(${index})">👁️ Voir détail</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += '</tbody></table>';
+            container.innerHTML = tableHTML;
+        }
+        
+        // View questionnaire detail
+        async function viewQuestionnaire(index) {
+            const results = await getAllResults();
+            const result = results[index];
+            
+            if (!result || !result.userAnswers) {
+                alert('Impossible d\'afficher ce questionnaire (données incomplètes)');
+                return;
+            }
+            
+            const modal = document.getElementById('questionnaireModal');
+            const detailDiv = document.getElementById('questionnaireDetail');
+            
+            document.getElementById('modalTitle').textContent = `Questionnaire - ${result.sessionId}`;
+            
+            let html = `
+                <div style="background: linear-gradient(135deg, #e7f1ff 0%, #f0e7ff 100%); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 15px; color: #667eea;">📊 Résumé</h3>
+                    <p><strong>Date :</strong> ${new Date(result.timestamp).toLocaleString('fr-FR')}</p>
+                    <p><strong>Score total :</strong> ${result.totalScore}/20 (${result.percentage}%)</p>
+                    <div class="thematic-scores" style="margin-top: 15px;">
+            `;
+            
+            for (const theme in result.thematicScores) {
+                const score = result.thematicScores[theme];
+                const percentage = Math.round((score.correct / score.total) * 100);
+                html += `
+                    <div class="thematic-score-card">
+                        <h4>${theme}</h4>
+                        <div class="score">${score.correct}/${score.total}</div>
+                        <div style="font-size: 12px; color: #6c757d;">${percentage}%</div>
+                    </div>
+                `;
+            }
+            
+            html += `
+                    </div>
+                </div>
+                <div class="questionnaire-view">
+            `;
+            
+            // Display each question
+            for (let i = 1; i <= 20; i++) {
+                const qKey = `q${i}`;
+                const question = questions[qKey];
+                const userAnswer = result.userAnswers[qKey];
+                const correctAnswer = correctAnswers[qKey];
+                
+                let isCorrect = false;
+                
+                if (question.isMatching) {
+                    isCorrect = JSON.stringify(userAnswer) === JSON.stringify(correctAnswer);
+                } else {
+                    const userSorted = Array.isArray(userAnswer) ? [...userAnswer].sort() : [];
+                    const correctSorted = Array.isArray(correctAnswer) ? [...correctAnswer].sort() : [];
+                    isCorrect = JSON.stringify(userSorted) === JSON.stringify(correctSorted);
+                }
+                
+                html += `
+                    <div class="question-item ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="question-title">
+                            <strong>Question ${i}:</strong> ${question.title}
+                            <span class="result-indicator ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                `;
+                
+                if (question.isMatching) {
+                    // Matching question
+                    html += '<div style="margin-top: 10px;">';
+                    for (const key in question.options) {
+                        const userVal = userAnswer[key] === 'auto' ? 'Autoévaluation' : 'Hétéroévaluation';
+                        const correctVal = correctAnswer[key] === 'auto' ? 'Autoévaluation' : 'Hétéroévaluation';
+                        const isOptionCorrect = userAnswer[key] === correctAnswer[key];
+                        
+                        html += `
+                            <div class="answer-option" style="margin-bottom: 8px;">
+                                <strong>${question.options[key]}:</strong>
+                                <span class="${isOptionCorrect ? 'correct-answer' : 'should-be'}">
+                                    ${userVal}
+                                    ${!isOptionCorrect ? ` (devrait être: ${correctVal})` : ''}
+                                </span>
+                            </div>
+                        `;
+                    }
+                    html += '</div>';
+                } else {
+                    // Multiple choice
+                    html += '<div style="margin-top: 10px;">';
+                    for (const optKey in question.options) {
+                        const isSelected = Array.isArray(userAnswer) && userAnswer.includes(optKey);
+                        const shouldBeSelected = Array.isArray(correctAnswer) && correctAnswer.includes(optKey);
+                        
+                        let className = '';
+                        let prefix = '';
+                        
+                        if (isSelected && shouldBeSelected) {
+                            className = 'correct-answer';
+                            prefix = '✓ ';
+                        } else if (isSelected && !shouldBeSelected) {
+                            className = 'should-be';
+                            prefix = '✗ ';
+                        } else if (!isSelected && shouldBeSelected) {
+                            className = 'should-be';
+                            prefix = '○ ';
+                        } else {
+                            prefix = '○ ';
+                        }
+                        
+                        html += `
+                            <div class="answer-option ${className}">
+                                ${prefix}${question.options[optKey]}
+                                ${isSelected && !shouldBeSelected ? ' <em>(réponse incorrecte)</em>' : ''}
+                                ${!isSelected && shouldBeSelected ? ' <em>(réponse manquante)</em>' : ''}
+                            </div>
+                        `;
+                    }
+                    html += '</div>';
+                }
+                
+                html += '</div>';
+            }
+            
+            html += '</div>';
+            
+            detailDiv.innerHTML = html;
+            modal.classList.add('show');
+        }
+        
+        // Close modal
+        function closeModal() {
+            document.getElementById('questionnaireModal').classList.remove('show');
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('questionnaireModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+        
+        // Export to CSV
+        async function exportToCSV() {
+            const results = await getAllResults();
+            
+            if (results.length === 0) {
+                alert('Aucun résultat à exporter');
+                return;
+            }
+            
+            let csv = 'Session ID,Date,Heure,Score Total,Pourcentage,Principes éthiques,Prise en charge douleur,Démence et fin de vie,Approche psychologique\n';
+            
+            results.forEach(result => {
+                const date = new Date(result.timestamp);
+                const dateStr = date.toLocaleDateString('fr-FR');
+                const timeStr = date.toLocaleTimeString('fr-FR');
+                
+                csv += `${result.sessionId},${dateStr},${timeStr},${result.totalScore}/20,${result.percentage}%,`;
+                csv += `${result.thematicScores['Principes éthiques'].correct}/${result.thematicScores['Principes éthiques'].total},`;
+                csv += `${result.thematicScores['Prise en charge de la douleur'].correct}/${result.thematicScores['Prise en charge de la douleur'].total},`;
+                csv += `${result.thematicScores['Démence et fin de vie'].correct}/${result.thematicScores['Démence et fin de vie'].total},`;
+                csv += `${result.thematicScores['Approche psychologique'].correct}/${result.thematicScores['Approche psychologique'].total}\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `resultats_quiz_emaspg_${new Date().toISOString().split('T')[0]}.csv`);
+            link.click();
+        }
+        
+        // Clear all results
+        async function clearAll() {
+            if (!confirm('⚠️ ATTENTION : Tous les résultats seront définitivement supprimés. Continuer ?')) {
+                return;
+            }
+            
+            try {
+                const results = await window.storage.list('quiz_', true);
+                
+                for (const key of results.keys) {
+                    await window.storage.delete(key, true);
+                }
+                
+                alert('✓ Tous les résultats ont été supprimés');
+                loadData();
+            } catch (error) {
+                alert('❌ Erreur : ' + error.message);
+            }
+        }
+        
+        // Initial load
+        loadData();
+    </script>
+</body>
+</html>
