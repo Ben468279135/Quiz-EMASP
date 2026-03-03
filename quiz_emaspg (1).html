@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizz Formation EMASPG</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 26px;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .info-section {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .info-banner {
+            background: linear-gradient(135deg, #e7f1ff 0%, #f0e7ff 100%);
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .info-banner p {
+            margin: 5px 0;
+            color: #495057;
+        }
+        
+        .info-banner strong {
+            color: #667eea;
+            font-size: 16px;
+        }
+        
+        #sessionId {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .info-fields {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .info-field {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .info-field label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #495057;
+            font-size: 14px;
+        }
+        
+        .info-field input {
+            padding: 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .info-field input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-section {
+            padding: 30px;
+        }
+        
+        .section-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            margin: 30px -30px 25px -30px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .section-title:first-child {
+            margin-top: 0;
+        }
+        
+        .question {
+            background: #f8f9fa;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s;
+        }
+        
+        .question:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+        }
+        
+        .question.answered {
+            border-color: #28a745;
+        }
+        
+        .question-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .question-number {
+            color: #667eea;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-left: 10px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+            background: white;
+        }
+        
+        .option:hover {
+            background-color: #e7f1ff;
+        }
+        
+        .option input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        
+        .option label {
+            cursor: pointer;
+            font-size: 15px;
+            color: #495057;
+            line-height: 1.5;
+            flex: 1;
+        }
+        
+        .matching-question {
+            margin-left: 10px;
+        }
+        
+        .matching-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .matching-label {
+            flex: 1;
+            font-size: 15px;
+            color: #495057;
+        }
+        
+        .matching-select {
+            padding: 8px 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            min-width: 180px;
+            transition: border-color 0.3s;
+        }
+        
+        .matching-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .submit-section {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            border-top: 2px solid #e9ecef;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+            width: 0%;
+        }
+        
+        .progress-text {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+        
+        .result-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            display: none;
+        }
+        
+        .result-section.show {
+            display: block;
+        }
+        
+        .score-display {
+            font-size: 56px;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+        
+        .result-details {
+            font-size: 18px;
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+        
+        .reset-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+            }
+            
+            .submit-btn, .reset-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Quizz d'évaluation de la formation<br>« accompagnement de la personne âgée en soins palliatifs »</h1>
+            <p>Cochez les réponses qui vous semblent correctes</p>
+        </div>
+        
+        <div class="info-section">
+            <div class="info-banner">
+                <p><strong>📊 Quiz anonyme</strong></p>
+                <p>Vos réponses sont enregistrées de manière anonyme. ID de session : <span id="sessionId"></span></p>
+                <p>Date : <span id="sessionDate"></span></p>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">0 question répondue sur 20</div>
+            
+            <form id="quizForm">
+                <!-- Section 1 -->
+                <div class="section-title">Approche des grands principes éthiques dans la prise en soin des résidents, en particulier en Soins Palliatifs</div>
+                
+                <div class="question" data-question="1">
+                    <div class="question-text">
+                        <span class="question-number">1.</span>
+                        Concernant les Soins palliatifs :
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="q1_a" name="q1" value="a">
+                            <label for="q1_a">Ce sont des soins actifs et continus.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q1_b" name="q1" value="b">
+                            <label for="q1_b">Ce sont des soins de la phase ultime et uniquement de celle-ci.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q1_c" name="q1" value="c">
+                            <label for="q1_c">C'est l'arrêt des soins.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q1_d" name="q1" value="d">
+                            <label for="q1_d">Il est toujours facile de déterminer le moment où l'on commence les soins palliatifs.</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question" data-question="2">
+                    <div class="question-text">
+                        <span class="question-number">2.</span>
+                        Parmi ces propositions concernant la personne de confiance, lesquelles sont vraies ?
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="q2_a" name="q2" value="a">
+                            <label for="q2_a">Toute personne majeure (hors tutelle) peut désigner une personne de confiance.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q2_b" name="q2" value="b">
+                            <label for="q2_b">La personne de confiance doit toujours signer le formulaire de désignation.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q2_c" name="q2" value="c">
+                            <label for="q2_c">La personne de confiance donne son avis à elle.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q2_d" name="q2" value="d">
+                            <label for="q2_d">La personne de confiance peut assister le résident dans ses démarches médicales.</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question" data-question="3">
+                    <div class="question-text">
+                        <span class="question-number">3.</span>
+                        Les grands principes de la Loi CLAEYS LEONETTI sont :
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="q3_a" name="q3" value="a">
+                            <label for="q3_a">Le respect de la volonté de la personne.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q3_b" name="q3" value="b">
+                            <label for="q3_b">Les directives anticipées, la personne de confiance.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q3_c" name="q3" value="c">
+                            <label for="q3_c">L'obligation de proposer au résident des soins/traitements les plus adaptés à son état général (= refus d'obstination déraisonnable).</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q3_d" name="q3" value="d">
+                            <label for="q3_d">L'autorisation du suicide médicalement assisté.</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question" data-question="4">
+                    <div class="question-text">
+                        <span class="question-number">4.</span>
+                        En cas de décision à prendre sur un traitement, et que le résident ne peut pas s'exprimer :
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="q4_a" name="q4" value="a">
+                            <label for="q4_a">S'il y a des directives anticipées, on doit les consulter.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q4_b" name="q4" value="b">
+                            <label for="q4_b">S'il y a une personne de confiance, on doit la consulter.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q4_c" name="q4" value="c">
+                            <label for="q4_c">La procédure collégiale est mise en place s'il n'y a ni personne de confiance ni directive anticipée.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q4_d" name="q4" value="d">
+                            <label for="q4_d">La famille prend les décisions pour les traitements.</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question" data-question="5">
+                    <div class="question-text">
+                        <span class="question-number">5.</span>
+                        Peut-on soulager les souffrances des malades en fin de vie au risque d'abréger la vie ?
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="q5_a" name="q5" value="a">
+                            <label for="q5_a">Oui</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q5_b" name="q5" value="b">
+                            <label for="q5_b">Non</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section 2 -->
+                <div class="section-title">Approche de la prise en charge de la douleur</div>
+                
+                <div class="question" data-question="6">
+                    <div class="question-text">
+                        <span class="question-number">6.</span>
+                        La douleur :
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="q6_a" name="q6" value="a">
+                            <label for="q6_a">Peut-être nociceptive ou neuropathique ou nociplastique ou mixte.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q6_b" name="q6" value="b">
+                            <label for="q6_b">A une dimension émotionnelle.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q6_c" name="q6" value="c">
+                            <label for="q6_c">Est moins fréquente chez les personnes âgées que dans le reste de la population.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q6_d" name="q6" value="d">
+                            <label for="q6_d">Nécessite l'utilisation d'outils d'évaluation validés.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q6_e" name="q6" value="e">
+                            <label for="q6_e">Doit toujours être prise en compte.</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question" data-question="7">
+                    <div class="question-text">
+                        <span class="question-number">7.</span>
+                        Les effets indésirables de la morphine sont :
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="q7_a" name="q7" value="a">
+                            <label for="q7_a">La constipation.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q7_b" name="q7" value="b">
+                            <label for="q7_b">La somnolence.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q7_c" name="q7" value="c">
+                            <label for="q7_c">La bradypnée (= ralentissement de la respiration).</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q7_d" name="q7" value="d">
+                            <label for="q7_d">La confusion.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q7_e" name="q7" value="e">
+                            <label for="q7_e">Les nausées.</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question" data-question="8">
+                    <div class="question-text">
+                        <span class="question-number">8.</span>
+                        Reliez les échelles au type d'évaluation :
+                    </div>
+                    <div class="matching-question">
+                        <div class="matching-item">
+                            <div class="matching-label">Algoplus</div>
+                            <select class="matching-select" name="q8_algoplus">
+                                <option value="">-- Sélectionner --</option>
+                                <option value="auto">Autoévaluation</option>
+                                <option value="hetero">Hétéroévaluation</option>
+                            </select>
+                        </div>
+                        <div class="matching-item">
+                            <div class="matching-label">Échelle verbale simple (EVS)</div>
+                            <select class="matching-select" name="q8_evs">
+                                <option value="">-- Sélectionner --</option>
+                                <option value="auto">Autoévaluation</option>
+                                <option value="hetero">Hétéroévaluation</option>
+                            </select>
+                        </div>
+                        <div class="matching-item">
+                            <div class="matching-label">Échelle numérique (EN)</div>
+                            <select class="matching-select" name="q8_en">
+                                <option value="">-- Sélectionner --</option>
+                                <option value="auto">Autoévaluation</option>
+                                <option value="hetero">Hétéroévaluation</option>
+                            </select>
+                        </div>
+                        <div class="matching-item">
+                            <div class="matching-label">ECPA</div>
+                            <select class="matching-select" name="q8_ecpa">
+                                <option value="">-- Sélectionner --</option>
+                                <option value="auto">Autoévaluation</option>
+                                <option value="hetero">Hétéroévaluation</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question" data-question="9">
+                    <div class="question-text">
+                        <span class="question-number">9.</span>
+                        En cas de soins et/ou soins de nursing douloureux, une prémédication peut être utile :
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="q9_a" name="q9" value="a">
+                            <label for="q9_a">En cas d'administration d'un traitement morphinique par voie orale, le médicament doit être donné au moins 1 heure avant le soin.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q9_b" name="q9" value="b">
+                            <label for="q9_b">En cas d'administration d'un traitement morphinique par voie sous-cutanée, l'injection doit être faite quand le soin débute.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q9_c" name="q9" value="c">
+                            <label for="q9_c">La prémédication d'un traitement morphinique est efficace pendant 4 heures.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q9_d" name="q9" value="d">
+                            <label for="q9_d">Associée à une coordination et à une bonne organisation entre les soignants.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q9_e" name="q9" value="e">
+                            <label for="q9_e">La douleur est toujours d'origine nociceptive lors des soins ou de la toilette.</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question" data-question="10">
+                    <div class="question-text">
+                        <span class="question-number">10.</span>
+                        La douleur chez une personne non communicante atteinte d'une démence peut se traduire par :
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="q10_a" name="q10" value="a">
+                            <label for="q10_a">Repli sur soi.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q10_b" name="q10" value="b">
+                            <label for="q10_b">Agressivité / changement du comportement.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q10_c" name="q10" value="c">
+                            <label for="q10_c">Position fœtale.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q10_d" name="q10" value="d">
+                            <label for="q10_d">Amélioration de son appétit.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q10_e" name="q10" value="e">
+                            <label for="q10_e">Amélioration de son humeur.</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section 3 -->
+                <div class="section-title">Démence et fin de vie</div>
+                
+                <div class="question" data-question="11">
+                    <div class="question-text">
+                        <span class="question-number">11.</span>
+                        Parmi ces troubles, lesquels sont des troubles cognitifs ?
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="q11_a" name="q11" value="a">
+                            <label for="q11_a">Troubles du jugement.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q11_b" name="q11" value="b">
+                            <label for="q11_b">Troubles de l'orientation.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q11_c" name="q11" value="c">
+                            <label for="q11_c">Troubles de l'attachement émotionnel.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q11_d" name="q11" value="d">
+                            <label for="q11_d">Troubles de la mémoire.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q11_e" name="q11" value="e">
+                            <label for="q11_e">Troubles du langage.</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question" data-question="12">
+                    <div class="question-text">
+                        <span class="question-number">12.</span>
+                        La démence :
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="q12_a" name="q12" value="a">
+                            <label for="q12_a">Est un mot qui englobe plusieurs maladies (ex : Maladie d'Alzheimer, démence à corps de Lewy, …).</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q12_b" name="q12" value="b">
+                            <label for="q12_b">On peut guérir la démence.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q12_c" name="q12" value="c">
+                            <label for="q12_c">La démence évolue progressivement.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q12_d" name="q12" value="d">
+                            <label for="q12_d">La démence c'est la baisse des aptitudes mentales.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q12_e" name="q12" value="e">
+                            <label for="q12_e">La démence a des conséquences sur l'état général du résident.</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question" data-question="13">
+                    <div class="question-text">
+                        <span class="question-number">13.</span>
+                        La fin de vie chez les personnes atteintes de démence présente des particularités, lesquelles ?
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="q13_a" name="q13" value="a">
+                            <label for="q13_a">Il est facile de prévoir quand la personne va décéder.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q13_b" name="q13" value="b">
+                            <label for="q13_b">Les familles sont soumises à un ascenseur émotionnel en fonction des hauts et des bas de la personne accompagnée.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q13_c" name="q13" value="c">
+                            <label for="q13_c">Même en cas de doute sur l'orientation des soins, on privilégie le confort.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q13_d" name="q13" value="d">
+                            <label for="q13_d">Les personnes atteintes de démence ont moins de douleur que les autres personnes.</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question" data-question="14">
+                    <div class="question-text">
+                        <span class="question-number">14.</span>
+                        Pour communiquer avec une personne âgée démente, il est conseillé :
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="q14_a" name="q14" value="a">
+                            <label for="q14_a">D'adopter une attitude calme.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q14_b" name="q14" value="b">
+                            <label for="q14_b">De respecter le rythme du résident.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q14_c" name="q14" value="c">
+                            <label for="q14_c">D'utiliser les sens du toucher, le regard, la parole et la verticalité (approche Gineste et Marescotti).</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q14_d" name="q14" value="d">
+                            <label for="q14_d">D'écouter les émotions du résident.</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question" data-question="15">
+                    <div class="question-text">
+                        <span class="question-number">15.</span>
+                        La fin de la vie chez la personne âgée démente :
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="q15_a" name="q15" value="a">
+                            <label for="q15_a">La démence est toujours la cause du décès.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q15_b" name="q15" value="b">
+                            <label for="q15_b">Les fausses-routes sont rares.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q15_c" name="q15" value="c">
+                            <label for="q15_c">Les résidents âgés déments sont souvent très dénutris.</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q15_d" name="q15" value="d">
+                            <label for="q15_d">Il peut y avoir des escarres.</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section 4 -->
+                <div class="section-title">Approche psychologique des soins palliatifs</div>
+                
+                <div class="question" data-question="16">
+                    <div class="question-text">
+                        <span class="question-number">16.</span>
+                        Quels sont les 3 fondamentaux de la relation d'aide ?
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="q16_a" name="q16" value="a">
+                            <label for="q16_a">Donner le nom de la pathologie rapidement pour se débarrasser de l'information</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q16_b" name="q16" value="b">
+                            <label for="q16_b">La congruence</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q16_c" name="q16" value="c">
+                            <label for="q16_c">La considération positive inconditionnelle</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q16_d" name="q16" value="d">
+                            <label for="q16_d">L'empathie</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question" data-question="17">
+                    <div class="question-text">
+                        <span class="question-number">17.</span>
+                        Quels sont les 5 besoins de la personne âgée en fin de vie ?
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="q17_a" name="q17" value="a">
+                            <label for="q17_a">Besoins physiologiques</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q17_b" name="q17" value="b">
+                            <label for="q17_b">Besoin de guérison</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q17_c" name="q17" value="c">
+                            <label for="q17_c">Besoin de sécurité</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q17_d" name="q17" value="d">
+                            <label for="q17_d">Besoin d'appartenance</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q17_e" name="q17" value="e">
+                            <label for="q17_e">Besoin d'estime de soi et des autres</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q17_f" name="q17" value="f">
+                            <label for="q17_f">Besoin spirituel</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question" data-question="18">
+                    <div class="question-text">
+                        <span class="question-number">18.</span>
+                        Quelles sont les deux techniques d'écoute active qui favorisent le mieux la neutralité ?
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="q18_a" name="q18" value="a">
+                            <label for="q18_a">Le conseil</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q18_b" name="q18" value="b">
+                            <label for="q18_b">La reformulation</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q18_c" name="q18" value="c">
+                            <label for="q18_c">L'acceptation inconditionnelle</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q18_d" name="q18" value="d">
+                            <label for="q18_d">L'interprétation</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q18_e" name="q18" value="e">
+                            <label for="q18_e">Le questionnement</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question" data-question="19">
+                    <div class="question-text">
+                        <span class="question-number">19.</span>
+                        Quels sont les 3 critères du Burn-out du soignant ?
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="q19_a" name="q19" value="a">
+                            <label for="q19_a">Sentiment d'échec professionnel</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q19_b" name="q19" value="b">
+                            <label for="q19_b">Déshumanisation de la relation à l'autre</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q19_c" name="q19" value="c">
+                            <label for="q19_c">Équilibre vie personnelle/vie professionnelle</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q19_d" name="q19" value="d">
+                            <label for="q19_d">Accomplissement au travail</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q19_e" name="q19" value="e">
+                            <label for="q19_e">Épuisement émotionnel</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question" data-question="20">
+                    <div class="question-text">
+                        <span class="question-number">20.</span>
+                        Quel est l'intérêt d'un groupe de parole pour les soignants d'un service ?
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="q20_a" name="q20" value="a">
+                            <label for="q20_a">Échanger sur les menus du restaurant de l'EHPAD</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q20_b" name="q20" value="b">
+                            <label for="q20_b">Mettre en mot ses ressentis</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q20_c" name="q20" value="c">
+                            <label for="q20_c">Partager son expérience en équipe</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q20_d" name="q20" value="d">
+                            <label for="q20_d">Solidifier les liens de l'équipe</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="q20_e" name="q20" value="e">
+                            <label for="q20_e">Focaliser sur les difficultés institutionnelles</label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <div class="submit-section">
+            <button class="submit-btn" id="submitBtn" disabled>Valider le questionnaire</button>
+        </div>
+        
+        <div class="result-section" id="resultSection">
+            <h2>Résultats du Quiz</h2>
+            <div class="score-display" id="scoreDisplay">--/--</div>
+            <div class="result-details" id="resultDetails"></div>
+            <button class="reset-btn" onclick="resetQuiz()">Nouveau quiz</button>
+        </div>
+    </div>
+    
+    <script>
+        // Correct answers
+        const correctAnswers = {
+            q1: ['a'],
+            q2: ['a', 'b', 'd'],
+            q3: ['a', 'b', 'c'],
+            q4: ['a', 'b', 'c'],
+            q5: ['a'],
+            q6: ['a', 'b', 'd', 'e'],
+            q7: ['a', 'b', 'c', 'd', 'e'],
+            q8: {algoplus: 'hetero', evs: 'auto', en: 'auto', ecpa: 'hetero'},
+            q9: ['a', 'c', 'd'],
+            q10: ['a', 'b', 'c'],
+            q11: ['a', 'b', 'd', 'e'],
+            q12: ['a', 'c', 'd', 'e'],
+            q13: ['b', 'c'],
+            q14: ['a', 'b', 'c', 'd'],
+            q15: ['c', 'd'],
+            q16: ['b', 'c', 'd'],
+            q17: ['a', 'c', 'd', 'e', 'f'],
+            q18: ['b', 'e'],
+            q19: ['a', 'b', 'e'],
+            q20: ['b', 'c', 'd']
+        };
+        
+        // Thematic sections
+        const thematicSections = {
+            'Principes éthiques': [1, 2, 3, 4, 5],
+            'Prise en charge de la douleur': [6, 7, 8, 9, 10],
+            'Démence et fin de vie': [11, 12, 13, 14, 15],
+            'Approche psychologique': [16, 17, 18, 19, 20]
+        };
+        
+        // Generate unique session ID
+        function generateSessionId() {
+            const timestamp = Date.now().toString(36);
+            const random = Math.random().toString(36).substring(2, 7);
+            return `${timestamp}-${random}`.toUpperCase();
+        }
+        
+        // Initialize session
+        const sessionId = generateSessionId();
+        document.getElementById('sessionId').textContent = sessionId;
+        document.getElementById('sessionDate').textContent = new Date().toLocaleDateString('fr-FR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        // Storage functions using persistent storage
+        async function saveResult(result) {
+            try {
+                const key = `quiz_${sessionId}`;
+                await window.storage.set(key, JSON.stringify(result), true);
+                console.log('Résultat enregistré avec succès');
+                return true;
+            } catch (error) {
+                console.error('Erreur lors de l\'enregistrement:', error);
+                return false;
+            }
+        }
+        
+        async function getAllResults() {
+            try {
+                const results = await window.storage.list('quiz_', true);
+                const allData = [];
+                
+                for (const key of results.keys) {
+                    try {
+                        const data = await window.storage.get(key, true);
+                        if (data && data.value) {
+                            allData.push(JSON.parse(data.value));
+                        }
+                    } catch (e) {
+                        console.error('Erreur lecture:', e);
+                    }
+                }
+                
+                return allData;
+            } catch (error) {
+                console.error('Erreur lors de la récupération des résultats:', error);
+                return [];
+            }
+        }
+        
+        const form = document.getElementById('quizForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        
+        function updateProgress() {
+            let answeredQuestions = 0;
+            const totalQuestions = 20;
+            
+            // Check checkboxes (questions 1-7, 9-20)
+            for (let i = 1; i <= 20; i++) {
+                if (i === 8) continue;
+                
+                const checkboxes = form.querySelectorAll(`input[name="q${i}"]`);
+                const checked = Array.from(checkboxes).some(cb => cb.checked);
+                if (checked) {
+                    answeredQuestions++;
+                    document.querySelector(`[data-question="${i}"]`).classList.add('answered');
+                } else {
+                    document.querySelector(`[data-question="${i}"]`).classList.remove('answered');
+                }
+            }
+            
+            // Check matching question (q8)
+            const q8Selects = ['q8_algoplus', 'q8_evs', 'q8_en', 'q8_ecpa'];
+            const allQ8Answered = q8Selects.every(name => {
+                return form.querySelector(`[name="${name}"]`).value !== '';
+            });
+            if (allQ8Answered) {
+                answeredQuestions++;
+                document.querySelector('[data-question="8"]').classList.add('answered');
+            } else {
+                document.querySelector('[data-question="8"]').classList.remove('answered');
+            }
+            
+            // Update progress bar
+            const percentage = (answeredQuestions / totalQuestions) * 100;
+            progressFill.style.width = percentage + '%';
+            progressText.textContent = `${answeredQuestions} question${answeredQuestions > 1 ? 's répondues' : ' répondue'} sur ${totalQuestions}`;
+            
+            submitBtn.disabled = answeredQuestions < totalQuestions;
+        }
+        
+        // Add event listeners
+        const allInputs = form.querySelectorAll('input[type="checkbox"], select');
+        allInputs.forEach(input => {
+            input.addEventListener('change', updateProgress);
+        });
+        
+        // Submit handler
+        submitBtn.addEventListener('click', async function() {
+            const scores = calculateScores();
+            await displayResults(scores);
+        });
+        
+        function calculateScores() {
+            let totalScore = 0;
+            const thematicScores = {};
+            
+            // Initialize thematic scores
+            for (const theme in thematicSections) {
+                thematicScores[theme] = { correct: 0, total: thematicSections[theme].length };
+            }
+            
+            // Calculate score for each question
+            for (let i = 1; i <= 20; i++) {
+                let isCorrect = false;
+                
+                if (i === 8) {
+                    // Matching question
+                    const userAnswers = {
+                        algoplus: form.querySelector('[name="q8_algoplus"]').value,
+                        evs: form.querySelector('[name="q8_evs"]').value,
+                        en: form.querySelector('[name="q8_en"]').value,
+                        ecpa: form.querySelector('[name="q8_ecpa"]').value
+                    };
+                    
+                    isCorrect = JSON.stringify(userAnswers) === JSON.stringify(correctAnswers.q8);
+                } else {
+                    // Checkbox questions
+                    const checkboxes = form.querySelectorAll(`input[name="q${i}"]:checked`);
+                    const userAnswers = Array.from(checkboxes).map(cb => cb.value).sort();
+                    const correct = correctAnswers[`q${i}`].sort();
+                    
+                    isCorrect = JSON.stringify(userAnswers) === JSON.stringify(correct);
+                }
+                
+                if (isCorrect) {
+                    totalScore++;
+                    
+                    // Update thematic score
+                    for (const theme in thematicSections) {
+                        if (thematicSections[theme].includes(i)) {
+                            thematicScores[theme].correct++;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            return {
+                total: totalScore,
+                thematic: thematicScores
+            };
+        }
+        
+        async function displayResults(scores) {
+            const totalQuestions = 20;
+            const percentage = Math.round((scores.total / totalQuestions) * 100);
+            
+            document.getElementById('scoreDisplay').textContent = `${scores.total}/${totalQuestions}`;
+            
+            let message = '';
+            let emoji = '';
+            
+            if (percentage >= 80) {
+                message = 'Excellent travail ! 🎉';
+                emoji = '✓✓✓';
+            } else if (percentage >= 60) {
+                message = 'Bon résultat ! 👍';
+                emoji = '✓✓';
+            } else if (percentage >= 40) {
+                message = 'Résultat satisfaisant 📚';
+                emoji = '✓';
+            } else {
+                message = 'Continuez à vous former 💪';
+                emoji = '⚠';
+            }
+            
+            // Build thematic breakdown
+            let thematicHTML = '<div style="margin-top: 25px; text-align: left; background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px;">';
+            thematicHTML += '<strong style="font-size: 18px; display: block; margin-bottom: 15px; text-align: center;">📊 Résultats par thématique</strong>';
+            
+            for (const theme in scores.thematic) {
+                const themeScore = scores.thematic[theme];
+                const themePercentage = Math.round((themeScore.correct / themeScore.total) * 100);
+                thematicHTML += `
+                    <div style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span><strong>${theme}</strong></span>
+                            <span>${themeScore.correct}/${themeScore.total} (${themePercentage}%)</span>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.3); height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="background: white; height: 100%; width: ${themePercentage}%; transition: width 0.5s;"></div>
+                        </div>
+                    </div>
+                `;
+            }
+            thematicHTML += '</div>';
+            
+            document.getElementById('resultDetails').innerHTML = `
+                <strong>${emoji} ${message}</strong><br>
+                Vous avez obtenu ${percentage}% de réponses correctes.<br>
+                <small>ID de session : ${sessionId}</small>
+                ${thematicHTML}
+            `;
+            
+            // Save result
+            const result = {
+                sessionId: sessionId,
+                timestamp: new Date().toISOString(),
+                totalScore: scores.total,
+                totalQuestions: totalQuestions,
+                percentage: percentage,
+                thematicScores: scores.thematic
+            };
+            
+            const saved = await saveResult(result);
+            if (saved) {
+                console.log('✓ Résultat enregistré');
+            } else {
+                console.warn('⚠ Impossible d\'enregistrer le résultat');
+            }
+            
+            document.getElementById('resultSection').classList.add('show');
+            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        function resetQuiz() {
+            if (confirm('Êtes-vous sûr de vouloir recommencer le quiz ? Cette action rechargera la page avec un nouvel ID de session.')) {
+                window.location.reload();
+            }
+        }
+        
+        // Initial progress update
+        updateProgress();
+        
+        // Admin function to view all results (accessible via console)
+        window.viewAllResults = async function() {
+            const results = await getAllResults();
+            console.table(results.map(r => ({
+                'Session ID': r.sessionId,
+                'Date': new Date(r.timestamp).toLocaleString('fr-FR'),
+                'Score': `${r.totalScore}/${r.totalQuestions}`,
+                'Pourcentage': `${r.percentage}%`,
+                'Éthique': `${r.thematicScores['Principes éthiques'].correct}/${r.thematicScores['Principes éthiques'].total}`,
+                'Douleur': `${r.thematicScores['Prise en charge de la douleur'].correct}/${r.thematicScores['Prise en charge de la douleur'].total}`,
+                'Démence': `${r.thematicScores['Démence et fin de vie'].correct}/${r.thematicScores['Démence et fin de vie'].total}`,
+                'Psychologie': `${r.thematicScores['Approche psychologique'].correct}/${r.thematicScores['Approche psychologique'].total}`
+            })));
+            return results;
+        };
+        
+        console.log('💡 Pour voir tous les résultats, tapez: viewAllResults()');
+    </script>
+</body>
+</html>
